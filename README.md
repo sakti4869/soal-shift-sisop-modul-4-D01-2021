@@ -109,6 +109,9 @@ Untuk melakukan encode pada suatu direktori secara rekursif hingga folder terdal
 
 Di dalam fungsi ``encodeFolderRecursively`` dan ``decodeFolderRecursively``, proses scan file dan folder di dalamnya dilakukan. Jika sebuah folder ditemukan, maka proses decode/encode dilanjutkan pada folder tersebut.
 
+### Output ###
+[![message-Image-1623592793884.jpg](https://i.postimg.cc/c4qDsDPJ/message-Image-1623592793884.jpg)](https://postimg.cc/PN4byMXG)
+
 ## Soal 2 ##
 
 Selain itu Sei mengusulkan untuk membuat metode enkripsi tambahan agar data pada komputer mereka semakin aman. Berikut rancangan metode enkripsi tambahan yang dirancang oleh Sei
@@ -219,6 +222,9 @@ Contohnya jika pada direktori asli nama filenya adalah “FiLe_CoNtoH.txt” mak
 
 ### Cara Pengerjaan ###
 Untuk poin e, kami belum mengimplementasikannya. Kami belum menemukan cara memanipulasi nama-nama file yang ditampilkan ketika command ls pada terminal dijalankan. Hal ini seharusnya bisa diimplementasikan dengan metode rename, yaitu melakukan rename pada file setiap file baru dibuat atau dipindahkan ke dalam direktori spesial.
+
+### Output ###
+[![message-Image-1623593715566.jpg](https://i.postimg.cc/KzMnwbGD/message-Image-1623593715566.jpg)](https://postimg.cc/WFsFqQJd)
 
 ## Soal 4 ##
 
