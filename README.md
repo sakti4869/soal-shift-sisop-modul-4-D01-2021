@@ -197,6 +197,32 @@ encodeVigenere(encryptedName);
 
 c. Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama aslinya.
 
+Kita butuh fungsi untuk melakukan decode Atbash, ROT13, dan Vigenere.
+```
+void decodeAtbash(char *s) {
+    for (int i = 0; s[i]; i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = 'A'-s[i]+'Z';
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = 'a'-s[i]+'z';
+    }
+}
+
+void decodeROT13(char *s) {
+    for (int i = 0; s[i]; i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = ((s[i]-'A'-13)%26)+'A';
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = ((s[i]-'a'-13)%26)+'a';
+    }
+}
+
+void decodeVigenere(char *s) {
+    char key[] = "SISOP";
+    for (int i = 0; s[i]; i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = ((s[i]-'A'-(key[i%((sizeof(key)-1))]-'A')+26)%26)+'A';
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = ((s[i]-'a'-(key[i%((sizeof(key)-1))]-'A')+26)%26)+'a';
+    }
+}
+```
+
+
 d. Setiap pembuatan direktori terencode (mkdir atau rename) akan tercatat ke sebuah log file beserta methodnya (apakah itu mkdir atau rename).
 
 e. Pada metode enkripsi ini, file-file pada direktori asli akan menjadi terpecah menjadi file-file kecil sebesar 1024 bytes, sementara jika diakses melalui filesystem rancangan Sin dan Sei akan menjadi normal. Sebagai contoh, Suatu_File.txt berukuran 3 kiloBytes pada directory asli akan menjadi 3 file kecil yakni:
