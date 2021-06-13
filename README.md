@@ -159,6 +159,30 @@ encodeROT13(encryptedName);
 
 b. Jika sebuah direktori di-rename dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere).
 
+Pertama, mari kita buat kode untuk enkripsi dengan Vigenere Cipher. Karena kita sudah memiliki fungsi untuk enkripsi Atbash, kita hanya perlu membuat fungsi ekripsi Vigenere saja.
+```
+void encodeVigenere(char *s) {
+    char key[] = "SISOP";
+    for (int i = 0; s[i]; i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = ((s[i] - 'A' + (key [i % (sizeof(key) - 1)] - 'A')) % 26) + 'A';
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = ((s[i] - 'a' + (key [i % (sizeof(key) - 1)] - 'a')) % 26) + 'a';
+    }
+}
+```
+
+Selanjutnya, untuk menentukan jika sebuah direktori di rename menjadi berawalan 'RX_' kita tambahkan kondisi berikut di fungsi ```xmp_rename```.
+```
+if(!isRX(fpath) && isRX(tpath)){
+   ...
+}
+```
+
+Selanjutnya, kita tambahkan kode untuk memanggil fungsi enkripsi di ```encoderenameFolderRX```.
+```
+encodeAtbash(encryptedName);
+encodeVigenere(encryptedName);
+```
+
 c. Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama aslinya.
 
 d. Setiap pembuatan direktori terencode (mkdir atau rename) akan tercatat ke sebuah log file beserta methodnya (apakah itu mkdir atau rename).
