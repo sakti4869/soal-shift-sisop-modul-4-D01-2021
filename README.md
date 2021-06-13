@@ -313,8 +313,6 @@ strftime(currTime, TIME_SIZE, "%d%m%Y-%H:%M:%S", lt);
 char log[LOG_SIZE];
 sprintf(log, "%s::%s:%s::%s", warn, currTime, command, desc);
 ```
-Pertama-tama, digenerate localtime
-Kemudian waktu di format sesuai dengan format yang diminta soal
-Tiap line log disimpan dalam variabel log dengan sprintf sesuai format
+Pertama-tama, digenerate localtime, kemudian waktu di format sesuai dengan format yang diminta soal, tiap line log disimpan dalam variabel log dengan sprintf sesuai format
 
 
