@@ -45,13 +45,13 @@ Di suatu jurusan, terdapat admin lab baru yang super duper gabut, ia bernama Sin
 Untuk mengecek apakah suatu direktori merupakan direktori ter-encode atau tidak, kami membuat fungsi isAtoZ yang mengembalikan value boolean. True jika direktori merupakan direktori ter-encode dan False jika direktori merupakan direktori ter-decode. Direktori yang ter-encode mempunyai substring "AtoZ" pada direktorinya.
 
 Pseudocode:
-``
+```
 dir = "/home/user/Downloads/AtoZ_folder"
 if isAtoZ(dir)
   // True
 else
   // False
-  ``
+  ```
 Direktori yang baru saja dibuat adalah kosong sehingga program tidak perlu melakukan apapun.
 
 b. Jika sebuah direktori di-rename dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
