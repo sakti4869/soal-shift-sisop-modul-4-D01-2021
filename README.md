@@ -118,36 +118,48 @@ Selain itu Sei mengusulkan untuk membuat metode enkripsi tambahan agar data pada
 
 a. Jika sebuah direktori dibuat dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
 
-Untuk menyelesaikan poin a, pertama kita buat fungsi untuk mengecek apakah direktori tersebut diawali dengan 'RX_' seperti berikut.
+Untuk menyelesaikan poin a, kita dapat menggunakan kode dibawah untuk mengecek apakah direktori tersebut diawali dengan 'RX_'.
 ```
-bool isRX(const char *path) {
-    int len = strlen(path);
-    if(path[0] == 'R' && path[1] == 'X' && path[2] == '_') return true;
-    else return false;
-}
+if (strstr(path, "RX_") != NULL) return PREF_RX;
 ```
 
-Lalu, kita tambahkan pada fungsi ```xmp_mkdir```, kode untuk mengecek apakah direktori yang dibuat berawalan 'RX_'.
+Lalu, kita tambahkan pada fungsi ```fs_mkdir```, kode untuk mengecek apakah direktori yang dibuat berawalan 'RX_'.
 ```
-if(isRX(fpath)){
+if(isEncoded(fpath) == PREF_RX){
  ...
 }
 ```
 
-Selanjutnya, kita buat metode enkripsi Atbash dan ROT13.
+Selanjutnya, kita dapat menggunakan fungsi encode untuk Atbash dan ROT13.
 ```
-void encodeAtbash(char *s) {
-    for (int i = 0; i < strlen(s); i++) {
-        if ('A' <= s[i] && s[i] <= 'Z') s[i] = 'A' + 'Z' - s[i] ;
-        else if ('a' <= s[i] && s[i] <= 'z') s[i] = 'a' + 'z' - s[i];
-    }
-}
-
-void encodeROT13(char *s) {
-    for (int i = 0; s[i]; i++) {
-        if ('A' <= s[i] && s[i] <= 'Z') s[i] = ((s[i] - 'A' + 13) % 26) + 'A';
-        else if ('a' <= s[i] && s[i] <= 'z') s[i] = ((s[i] - 'a' + 13) % 26) + 'a';
-    }
+void encode(char* s, int method) {
+	int len = strlen(s);
+	int i;
+	
+	if (method == ENC_ATBASH) {
+		for (i = 0; i < len; i++) {
+			if (s[i] >= 'A' && s[i] <= 'Z')
+				s[i] = 'Z' - s[i] + 'A';
+     			else if (s[i] >= 'a' && s[i] <= 'z')
+     				s[i] = 'z' - s[i] + 'a';
+		}
+	} else if (method == ENC_ROT13) {
+		for (i = 0; i < len; i++) {
+			if (s[i] >= 'A'&& s[i] <= 'Z')
+				s[i] = ((s[i]-'A'+13)%26)+'A';
+    			else if (s[i] >= 'a'&& s[i] <= 'z')
+    				s[i] = ((s[i]-'a'+13)%26)+'a';
+		}
+	} else if (method == ENC_VIG) {
+		char* key = "SISOP";
+		
+		for (i = 0; i < len; i++) {
+			if (s[i] >= 'A' && s[i] <= 'Z')
+				s[i] = ((s[i] - 'A' + (key[i % ((sizeof(key) - 1))] - 'A')) % 26) + 'A';
+			else if (s[i] >= 'a' && s[i] <= 'z')
+				s[i] = ((s[i] - 'a' + (key[i % ((sizeof(key) - 1))] - 'A')) % 26) + 'a';
+		}
+	}
 }
 ```
 
@@ -206,35 +218,25 @@ Untuk mengecek apakah direktori merupakan direktori spesial atau tidak, fungsi i
 
 Misalnya,
 ```
-dir1 = "/home/ryan/Downloads/A_is_a_Photo/1.jpg"
-dir2 = "/home/ryan/Downloads/Photo/2.jpg"
-dir3 = "/home/ryan/Downloads/A_is_a_Photo/2019/1.jpg"
+dir1 = "/home/david/Downloads/A_is_a_files/1.jpg"
+dir2 = "/home/david/Downloads/pictures/2.jpg"
+dir3 = "/home/david/Downloads/A_is_a_files/backup/1.jpg"
 
-printf("%d %d %d", isAisA(dir1), isAisA(dir2), isAisA(dir3))
+printf("%d %d %d", (isEncoded(dir1) == PREF_AISA), (isEncoded(dir2) == PREF_AISA), (isEncoded(dir3) == PREF_AISA))
 
 // Output: 1 0 1
 ```
 Selain fungsi isAisA, ada fungsi isAisA_Content(path). path merupakan string yang merujuk pada lokasi sebuah file sehingga fungsi ini bertujuan untuk mengecek apakah suatu file berada di dalam direktori spesial atau tidak. Fungsi ini mengembalikan nilai TRUE jika parent direktori pada path mempunyai substring "A_is_a_". Parent direktori saja yang di cek karena pada soal 3 poin d dijelaskan bahwa direktori spesial hanya berdampak pada file-file yang berada di dalamnya. Dalam kata lain, sifat direktori spesial tidak diturunkan kepada folder yang ada di dalamnya secara rekursif.
 
-Misalnya,
-```
-isAisA_Content("/home/ryan/Downloads/A_is_a_Photo/1.jpg") = True
-isAisA_Content("/home/ryan/Downloads/A_is_a_Photo/2019/1.jpg") = False // Artinya, file ini bukan merupakan file yang berada di dalam direktori spesial
-isAisA_Content("/home/ryan/Downloads/A_is_a_Photo") = False // A_is_a_Photo diasumsikan merupakan sebuah file tanpa ektensi yang berada di dalam folder Downloads sehingga file ini bukan merupakan file yang berada di dalam direktori spesial
-isAisA_Content("/home/ryan/Downloads/A_is_a_Photo/A_is_a_Good/2.jpg") = True
-isAisA_Content("/home/ryan/Downloads/A_is_a_Photo/Good/A_is_a_Best/t.jpg") = True
-```
-Direktori yang baru saja dibuat adalah direktori kosong sehingga tidak perlu dilakukan proses encode / decode.
-
 **(b)** Jika sebuah direktori di-rename dengan memberi awalan “A_is_a_”, maka direktori tersebut akan menjadi sebuah direktori spesial.
 
 ### Cara Pengerjaan ###
-Fungsi fuse xmp_rename akan terpanggil ketika sebuah direktori di-rename atau sebuah file di-rename. Dengan memanfaatkan fungsi isAisA yang telah dibuat pada poin a, kita dapat mengetahui apakah sebuah direktori di-rename dari direktori spesial menjadi direktori tidak spesial atau direktori tidak spesial menjadi direktori spesial dengan membandingan isAisA(fpath) dan isAisA(tpath).
+Fungsi fuse fs_rename akan terpanggil ketika sebuah direktori di-rename atau sebuah file di-rename. Dengan memanfaatkan fungsi isAisA yang telah dibuat pada poin a, kita dapat mengetahui apakah sebuah direktori di-rename dari direktori spesial menjadi direktori tidak spesial atau direktori tidak spesial menjadi direktori spesial dengan membandingan isAisA(fpath) dan isAisA(tpath).
 
 Misalnya,
 ```
-A = isAisA(fpath)
-B = isAisA(tpath)
+A = (isEncoded(fpath) == PREF_AISA)
+B = (isEncoded(tpath) == PREF_AISA)
 
 if A and !B
   // Substring A_is_a_ dihapus
@@ -251,16 +253,16 @@ Penjelasan terkait poin c telah diberikan pada strategi penyelesaian poin b.
 ### Cara Pengerjaan ###
 Jika sebuah direktori X yang mempunyai awalan AtoZ_ atau RX_ di-rename menjadi direktori spesial (direktori dengan awalan A_is_a_), maka file-file yang berada di dalam direktori X tersebut akan di-decode. Akan tetapi, file-file yang berada di dalam folder yang berada di dalam direktori X tidak di-decode.
 
-Untuk menyelesaikan persoalan ini, fungsi ``xmp_rename`` digunakan. Dengan memanfaatkan fungsi ``isRX`` dan ``isAtoZ`` yang telah dibuat, kita dapat mendeteksi kapan sebuah direktori RX_ di-rename menjadi direktori spesial atau kapan sebuah direktori AtoZ_ di-rename menjadi direktori spesial. Berikut ini contohnya
+Untuk menyelesaikan persoalan ini, fungsi ``fs_rename`` digunakan. Dengan memanfaatkan fungsi ``isRX`` dan ``isAtoZ`` yang telah dibuat, kita dapat mendeteksi kapan sebuah direktori RX_ di-rename menjadi direktori spesial atau kapan sebuah direktori AtoZ_ di-rename menjadi direktori spesial. Berikut ini contohnya
 ```
 // fpath adalah path old
 // tpath adalah path new
-Z1 = isAtoZ(fpath)
-Z2 = isAtoZ(tpath)
-R1 = isRX(fpath)
-R2 = isRX(tpath)
-S1 = isAisA(fpath)
-S2 = isAisA(tpath)
+Z1 = (isEncoded(fpath) == PREF_ATOZ)
+Z2 = (isEncoded(tpath) == PREF_ATOZ)
+R1 = (isEncoded(fpath) == PREF_RX)
+R2 = (isEncoded(tpath) == PREF_RX)
+S1 = (isEncoded(fpath) == PREF_AISA)
+S2 = (isEncoded(tpath) == PREF_AISA)
 
 if Z1 and S2
   // Ketika folder AtoZ_ di-rename menjadi folder spesial
@@ -271,11 +273,11 @@ else if S1 and Z2
 else if S1 and R2
   // Ketika folder spesial di-rename menjadi folder RX_
   ```
-Ketika folder AtoZ_ di-rename menjadi folder spesial, maka panggil fungsi ``decodeFolderRecursively(path, depth)`` dengan depth = 0 agar proses decode hanya berlaku pada file yang berada di dalamnya. Dalam kata lain, tidak perlu melakukan decode terhadap file yang berada di dalam folder yang berada di dalam folder spesial.
+Ketika folder AtoZ_ di-rename menjadi folder spesial, maka panggil fungsi ``decDirRec(path, depth)`` dengan depth = 0 agar proses decode hanya berlaku pada file yang berada di dalamnya. Dalam kata lain, tidak perlu melakukan decode terhadap file yang berada di dalam folder yang berada di dalam folder spesial.
 
 Hal ini juga berlaku untuk folder RX_.
 
-Ketika folder spesial di-rename menjadi folder AtoZ_, maka panggil fungsi ``encodeFolderRecursively(path, depth)`` dengan depth = 0 agar proses encode hanya berlaku pada file yang berada di dalamnya.
+Ketika folder spesial di-rename menjadi folder AtoZ_, maka panggil fungsi ``encDirRec(path, depth)`` dengan depth = 0 agar proses encode hanya berlaku pada file yang berada di dalamnya.
 
 Hal ini juga berlaku untuk folder RX_.
 
@@ -333,13 +335,6 @@ static const char warn[] = "WARNING";
 ```
 Buatlah fungsi yang dapat dipanggil oleh fungsi logEncode untuk logging level WARNING
 ```
-/*
-function: logWarn
-add a WARNING level log
-@param command: type of called system call
-@param desc: additional information and parameters
-@return null
-*/
 void logWarn(char *command, char *desc);
 ```
 **(d)** Sisanya, akan dicatat pada level INFO.
@@ -383,5 +378,3 @@ char log[LOG_SIZE];
 sprintf(log, "%s::%s:%s::%s", warn, currTime, command, desc);
 ```
 Pertama-tama, digenerate localtime, kemudian waktu di format sesuai dengan format yang diminta soal, tiap line log disimpan dalam variabel log dengan sprintf sesuai format
-
-
