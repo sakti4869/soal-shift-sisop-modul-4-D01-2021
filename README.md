@@ -118,6 +118,45 @@ Selain itu Sei mengusulkan untuk membuat metode enkripsi tambahan agar data pada
 
 a. Jika sebuah direktori dibuat dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
 
+Untuk menyelesaikan poin a, pertama kita buat fungsi untuk mengecek apakah direktori tersebut diawali dengan 'RX_' seperti berikut.
+```
+bool isRX(const char *path) {
+    int len = strlen(path);
+    if(path[0] == 'R' && path[1] == 'X' && path[2] == '_') return true;
+    else return false;
+}
+```
+
+Lalu, kita tambahkan pada fungsi ```xmp_mkdir```, kode untuk mengecek apakah direktori yang dibuat berawalan 'RX_'.
+```
+if(isRX(fpath)){
+ ...
+}
+```
+
+Selanjutnya, kita buat metode enkripsi Atbash dan ROT13.
+```
+void encodeAtbash(char *s) {
+    for (int i = 0; i < strlen(s); i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = 'A' + 'Z' - s[i] ;
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = 'a' + 'z' - s[i];
+    }
+}
+
+void encodeROT13(char *s) {
+    for (int i = 0; s[i]; i++) {
+        if ('A' <= s[i] && s[i] <= 'Z') s[i] = ((s[i] - 'A' + 13) % 26) + 'A';
+        else if ('a' <= s[i] && s[i] <= 'z') s[i] = ((s[i] - 'a' + 13) % 26) + 'a';
+    }
+}
+```
+
+Terakhir, kita tambahkan kode untuk memanggil kedua fungsi diatas pada fungsi ```encodemkdirFolderRX```.
+```
+encodeAtbash(encryptedName);
+encodeROT13(encryptedName);
+```
+
 b. Jika sebuah direktori di-rename dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere).
 
 c. Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama aslinya.
