@@ -54,7 +54,7 @@ else
   ```
 Direktori yang baru saja dibuat adalah kosong sehingga program tidak perlu melakukan apapun.
 
-b. Jika sebuah direktori di-rename dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
+**(b)**  Jika sebuah direktori di-rename dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
 
 ### Cara Pengerjaan ###
 Ketika suatu direktori atau file di-rename, fungsi fuse ``xmp_rename`` akan terpanggil. Dengan menggunakan fungsi ini, kita dapat melakukan pengecekan apakah suatu direktori diubah menjadi direktori ter-encode atau ter-decode.
@@ -77,12 +77,12 @@ if A and !B
 else if !A and B
   encode()
 ```
-c. Apabila direktori yang terenkripsi di-rename menjadi tidak ter-encode, maka isi direktori tersebut akan terdecode.
+**(c)**  Apabila direktori yang terenkripsi di-rename menjadi tidak ter-encode, maka isi direktori tersebut akan terdecode.
 
 ### Cara Pengerjaan ###
 Penjelasan terkait strategi penyelesaian poin c telah dijelaskan pada poin b
 
-d. Setiap pembuatan direktori ter-encode (mkdir atau rename) akan tercatat ke sebuah log. Format : /home/[USER]/Downloads[Nama Direktori] → /home/[USER]/Downloads/AtoZ_[Nama Direktori]
+**(d)** Setiap pembuatan direktori ter-encode (mkdir atau rename) akan tercatat ke sebuah log. Format : /home/[USER]/Downloads[Nama Direktori] → /home/[USER]/Downloads/AtoZ_[Nama Direktori]
 
 ### Cara Pengerjaan ###
 Untuk melakukan log, prosedur logEncode dibuat. Prosedur ini berfungsi untuk mencatat suatu kegiatan ke sebuah log. Prosedur ini terpanggil sebelum proses decode atau encode selesai.
@@ -102,7 +102,7 @@ xmp_mkdir(path, ...)
 if isAtoZ(path)
   logEncode("", path)
   ```
-e. Metode encode pada suatu direktori juga berlaku terhadap direktori yang ada di dalamnya. (rekursif)
+**(e)**  Metode encode pada suatu direktori juga berlaku terhadap direktori yang ada di dalamnya. (rekursif)
 
 ### Cara Pengerjaan ###
 Untuk melakukan encode pada suatu direktori secara rekursif hingga folder terdalam, fungsi-fungsi dari library ``dirent.h`` digunakan. Sebuah fungsi ``encodeFolderRecursively ``dan ``decodeFolderRecursively`` dibuat untuk melakukan encode dan decode pada suatu folder. Return value dari fungsi-fungsi tersebut adalah banyaknya file yang telah berhasil di encode/decode. Jika return value dari fungsi adalah nol, maka tidak ada file yang berhasil di decode/encode.
