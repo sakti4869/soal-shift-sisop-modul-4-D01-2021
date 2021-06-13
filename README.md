@@ -39,7 +39,20 @@ David Ralphwaldo M 05111940000190
 
 Di suatu jurusan, terdapat admin lab baru yang super duper gabut, ia bernama Sin. Sin baru menjadi admin di lab tersebut selama 1 bulan. Selama sebulan tersebut ia bertemu orang-orang hebat di lab tersebut, salah satunya yaitu Sei. Sei dan Sin akhirnya berteman baik. Karena belakangan ini sedang ramai tentang kasus keamanan data, mereka berniat membuat filesystem dengan metode encode yang mutakhir. Berikut adalah filesystem rancangan Sin dan Sei :
 
-a. Jika sebuah direktori dibuat dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
+**(a)**  Jika sebuah direktori dibuat dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
+
+### Cara Pengerjaan ###
+Untuk mengecek apakah suatu direktori merupakan direktori ter-encode atau tidak, kami membuat fungsi isAtoZ yang mengembalikan value boolean. True jika direktori merupakan direktori ter-encode dan False jika direktori merupakan direktori ter-decode. Direktori yang ter-encode mempunyai substring "AtoZ" pada direktorinya.
+
+Pseudocode:
+``
+dir = "/home/user/Downloads/AtoZ_folder"
+if isAtoZ(dir)
+  // True
+else
+  // False
+  ``
+Direktori yang baru saja dibuat adalah kosong sehingga program tidak perlu melakukan apapun.
 
 b. Jika sebuah direktori di-rename dengan awalan "AtoZ_", maka direktori tersebut akan menjadi direktori ter-encode.
 
